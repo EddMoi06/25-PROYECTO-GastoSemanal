@@ -26,6 +26,11 @@ class Presupuesto {
         const gastado = this.gastos.reduce( (total, gasto) => total + gasto.cantidad, 0)
         this.restante = this.presupuesto - gastado;
     }
+
+    eliminarGasto(id){
+        this.gastos = this.gastos.filter( gasto => gasto.id !== id)
+        this.calcularRestante()
+    }
 }
 
 class UI {
@@ -86,7 +91,7 @@ class UI {
         }
     }
 
-    agregarGastoListado(gastos){
+    mostrarGastos(gastos){
         this.limpiarHTML()
         gastos.forEach(gasto => {
             const {cantidad, nombre, id} = gasto;
@@ -102,16 +107,14 @@ class UI {
             const btnBorrar = document.createElement('button');
             btnBorrar.textContent = 'Borrar';
             btnBorrar.className = 'btn btn-danger borrar-gasto'
-            
+            btnBorrar.onclick = () => {
+                eliminarGasto(id)
+            }
             
 
             nuevoGasto.appendChild(btnBorrar)
             gastoListado.appendChild(nuevoGasto)
         })
-    }
-
-    eliminarGasto(id){
-        console.log(gastoListado)
     }
 
     limpiarHTML(){
@@ -160,7 +163,15 @@ function agregarGasto(e){
     presupuesto.nuevoGasto(detallesGasto)
 
     const { gastos, restante } = presupuesto
-    ui.agregarGastoListado(gastos)
+    ui.mostrarGastos(gastos)
     ui.actualizarPresupuesto(restante)
     ui.comprobarPresupuesto(presupuesto)
+}
+
+function eliminarGasto(id){
+    presupuesto.eliminarGasto(id)
+    const { gastos, restante } = presupuesto
+    ui.mostrarGastos(gastos)
+    ui.comprobarPresupuesto(gastos)
+    ui.actualizarPresupuesto(restante)
 }
